@@ -1,0 +1,230 @@
+================================================================
+                    TAPTOGO — PROJECT OVERVIEW
+             A Smart NFC-Based Bus Ticketing System
+================================================================
+
+WHAT IS TAPTOGO?
+----------------
+TapToGo is a mobile app that makes travelling by bus easier 
+and cashless. Instead of paying cash to a conductor, passengers 
+simply tap their phone on a small sticker placed inside the bus 
+when they board and again when they exit. The app automatically 
+calculates the fare based on how many stops they travelled and 
+deducts it from their digital wallet.
+
+Think of it like a metro card system, but for regular buses,
+running entirely on a smartphone app.
+
+
+----------------------------------------------------------------
+HOW DOES IT WORK? (Simple Step-by-Step)
+----------------------------------------------------------------
+
+STEP 1 — Passenger downloads and registers on the app
+   - Creates an account with name, email/phone and password
+   - A digital wallet is created starting at ₹0
+   - Passenger adds money to the wallet (₹10, ₹20, ₹50, etc.)
+
+STEP 2 — Passenger wants to travel
+   - Opens the app and selects their starting stop and 
+     destination stop
+   - App shows all available buses for that route
+   - Each bus card shows the bus number, name, stops,
+     timings, and the estimated fare
+
+STEP 3 — Passenger boards the bus
+   - Goes to the "Tap" section of the app
+   - Taps their phone on the NFC sticker inside the bus
+     (NFC is the same technology used in Google Pay / PhonePe
+      tap-to-pay — no internet needed for the tap itself)
+   - App instantly recognises which bus it is
+   - A screen opens showing:
+       * Bus name and number
+       * All stops on the route
+       * Live location of the bus on a map
+       * Number of people currently on the bus
+
+STEP 4 — Passenger exits the bus
+   - Taps "Exit Bus" button in the app
+   - App calculates fare based on stops travelled
+     Formula: ₹5 base + ₹2 per stop (maximum ₹45)
+     Example: Travelled 5 stops = ₹5 + (5×₹2) = ₹15
+   - A payment screen appears and LOCKS the app
+   - Passenger must pay before they can do anything else
+   - Payment options: Wallet balance OR UPI
+   - Once paid, app unlocks and returns to home screen
+
+STEP 5 — What if passenger closes the app without paying?
+   - Next time they open the app it goes straight to the 
+     payment screen again
+   - They cannot use any feature until the fare is paid
+   - This prevents fare evasion completely
+
+
+----------------------------------------------------------------
+WHO USES THE APP? (4 Types of Users)
+----------------------------------------------------------------
+
+1. PASSENGER (Regular bus traveller)
+   - Searches for buses, taps in/out, pays fare, 
+     manages wallet, views trip history
+
+2. ADMIN (Single person who manages the system)
+   - Login ID: harmetadv | Password: 12345678
+   - Adds bus details into the system:
+       Bus number, name, route stops, timings,
+       conductor details, camera details, NFC tag ID
+   - Can view and edit all bus information
+   - Can configure fare settings
+
+3. CONDUCTOR (The bus staff)
+   - Has their own login ID and password 
+     (set by admin when adding the bus)
+   - Can see how many passengers have tapped in/out
+   - Can upload a photo or video of the bus interior
+     and the AI model counts how many people are inside
+   - Can update the live GPS location of the bus
+
+4. CAMERA DEVICE (A spare phone kept inside the bus)
+   - Logs in with a special camera ID and password
+   - Automatically activates the phone camera
+   - Runs an AI model every 10 seconds to count 
+     how many people are in the bus
+   - Updates the people count in the database automatically
+   - Passengers and conductor can see this count live
+
+
+----------------------------------------------------------------
+THE NFC STICKER (The "Tap" Hardware)
+----------------------------------------------------------------
+
+Each bus has a small NFC sticker stuck inside it.
+NFC stands for Near Field Communication — it is the same 
+chip technology used when you tap your phone to pay at a 
+shop or metro gate.
+
+- Each sticker has a permanent unique ID burned into it
+- This ID is registered to a specific bus in the system
+- When a passenger taps their phone on it, the app reads 
+  this ID and knows exactly which bus it is
+- Cost of NFC stickers: approximately ₹150 for 10 stickers
+- No internet required for the tap — it works like a 
+  barcode scan, instant and offline
+
+
+----------------------------------------------------------------
+THE AI PEOPLE COUNTING MODEL
+----------------------------------------------------------------
+
+The app includes a trained AI model (CSRNet — a type of 
+neural network) that can count how many people are in 
+an image, video, or live camera feed.
+
+- For a PHOTO: returns the exact number of people
+- For a VIDEO: returns a minimum and maximum range
+  (e.g. "between 12 and 18 people")
+- For LIVE CAMERA: updates the count every 10 seconds
+
+This model was trained separately and is already included
+in the project as a Python file (model_function.py).
+The conductor or camera device uses this to report
+bus occupancy to passengers in real time.
+
+
+----------------------------------------------------------------
+THE MAP (Live Bus Tracking)
+----------------------------------------------------------------
+
+When a passenger is on board, they can see a live map 
+showing exactly where the bus is at that moment.
+
+- The map uses Leaflet.js (a free, open-source mapping tool)
+- Map tiles come from OpenStreetMap (no cost, no API key)
+- The map is dark themed to match the app design
+- The bus appears as a pulsing lavender dot on the map
+- All route stops appear as small markers
+- The route is drawn as a line connecting all stops
+- Bus location updates every 5 seconds
+
+
+----------------------------------------------------------------
+APP DESIGN
+----------------------------------------------------------------
+
+- Platform: Android mobile app
+- Built with: Python + Flet 
+  (Flet allows Python code to build mobile apps)
+- Database: SQLite (a lightweight local database, 
+  stored as a single file — no server needed)
+- Color scheme: Dark background with pastel lavender accents
+- Design style: Minimal, clean, rounded corners everywhere,
+  no clutter
+
+The app has 3 main tabs for passengers:
+  Home  |  Tap  |  Profile
+
+
+----------------------------------------------------------------
+DATABASE (What Data is Stored)
+----------------------------------------------------------------
+
+All data is stored in a single file called taptogo.db
+
+Tables (like spreadsheets) inside the database:
+
+users       — passenger accounts and wallet balances
+buses       — all bus information added by admin  
+conductors  — conductor login details
+cameras     — camera device login details
+tap_logs    — record of every tap in and tap out
+nfc_scans   — NFC tag reads from the phone
+
+
+----------------------------------------------------------------
+TECHNOLOGY SUMMARY
+----------------------------------------------------------------
+
+Programming Language : Python 3.10
+UI Framework         : Flet (Python-based mobile UI)
+Database             : SQLite (no server required)
+Maps                 : Leaflet.js via WebView
+AI Model             : CSRNet (PyTorch, OpenCV)
+NFC                  : Android NFC intent (built-in phone NFC)
+Payment              : Wallet (in-app) or UPI
+
+
+----------------------------------------------------------------
+HOW TO RUN THE APP (For Technical Reference)
+----------------------------------------------------------------
+
+1. Make sure Python 3.10 is installed
+2. Install required library: pip install flet
+3. Navigate to the project folder in terminal
+4. Run: python main.py
+5. App opens on screen
+
+To install on an Android phone:
+1. Run: flet build apk
+2. Transfer the generated APK file to phone
+3. Install it (allow unknown sources if prompted)
+
+
+----------------------------------------------------------------
+PROJECT SUMMARY IN ONE PARAGRAPH
+----------------------------------------------------------------
+
+TapToGo is a Python-based Android application that digitises 
+bus travel by replacing cash payments with a tap-based entry 
+and exit system using NFC stickers. Passengers register on the 
+app, add money to a digital wallet, search for buses by stop, 
+and tap their phone on an NFC sticker to board. When they exit, 
+the fare is automatically calculated and deducted. The system 
+includes an admin portal to manage buses, a conductor dashboard 
+with AI-based crowd counting, a camera portal for live occupancy 
+tracking, and a live map showing real-time bus location. The 
+entire system runs locally using SQLite with no internet server 
+required, making it practical and lightweight for a mini project.
+
+================================================================
+                        END OF DOCUMENT
+================================================================

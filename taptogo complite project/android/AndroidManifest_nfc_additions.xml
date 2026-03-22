@@ -1,0 +1,20 @@
+<!--
+  Add these to your AndroidManifest.xml when building with NFC support.
+  Run: flet build apk
+  Then merge these into the generated android/app/src/main/AndroidManifest.xml
+-->
+<!-- Add inside <manifest>: -->
+<!--
+  <uses-permission android:name="android.permission.NFC"/>
+  <uses-feature android:name="android.hardware.nfc" android:required="false"/>
+-->
+
+<!-- Add inside <activity android:name=".MainActivity" ...>: -->
+<!--
+  <intent-filter>
+    <action android:name="android.nfc.action.NDEF_DISCOVERED"/>
+    <action android:name="android.nfc.action.TAG_DISCOVERED"/>
+    <action android:name="android.nfc.action.TECH_DISCOVERED"/>
+    <category android:name="android.intent.category.DEFAULT"/>
+  </intent-filter>
+-->

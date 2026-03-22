@@ -1,0 +1,16 @@
+[project]
+name = "taptogo"
+version = "0.1.0"
+description = "TapToGo - NFC bus ticketing app"
+requires-python = ">=3.10"
+dependencies = ["flet>=0.24.0"]
+
+[tool.flet]
+org = "com.taptogo"
+product = "TapToGo"
+
+[tool.flet.android.permission]
+"android.permission.NFC" = true
+
+[tool.flet.android.feature]
+"android.hardware.nfc" = false

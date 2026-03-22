@@ -1,0 +1,176 @@
+================================================================
+          CROWD COUNTER — USER GUIDE
+          CSRNet People Counting Model
+================================================================
+
+WHAT IS THIS?
+-------------
+This is an AI-powered people counting tool. You give it an 
+image, a video, or a live webcam feed — and it tells you 
+approximately how many people are in it.
+
+It was built using a deep learning model called CSRNet 
+(Congested Scene Recognition Network) trained on the 
+ShanghaiTech dataset.
+
+
+----------------------------------------------------------------
+DATASET USED FOR TRAINING
+----------------------------------------------------------------
+
+Dataset : ShanghaiTech Crowd Counting Dataset
+Part    : Part A (highly dense crowd scenes)
+Source  : Originally published by Zhang et al. (CVPR 2016)
+
+Part A contains:
+- 300 training images
+- 182 testing images
+- Crowds ranging from small groups to extremely dense scenes
+- Ground truth annotation: dot maps (one dot per person head)
+
+During training, these dot maps were converted into 
+density maps using Gaussian blur (sigma=4) and the model 
+was trained to predict these density maps. The total sum 
+of the predicted density map gives the people count.
+
+
+----------------------------------------------------------------
+FILES IN THIS PROJECT
+----------------------------------------------------------------
+
+train.py          — The training script used to train the model
+                    on the ShanghaiTech dataset. You do not 
+                    need to run this unless you want to retrain.
+
+model_function.py — The main file you will use. Contains three
+                    functions: image, video, webcam.
+                    Run this file to use the crowd counter.
+
+csrnet.pth        — The trained model weights file. This must
+                    be in the same folder as model_function.py.
+                    Without this file the model will not work.
+
+
+----------------------------------------------------------------
+HOW TO USE IT
+----------------------------------------------------------------
+
+REQUIREMENTS — install these first:
+  pip install torch torchvision opencv-python scipy
+
+Make sure csrnet.pth is in the same folder, then run:
+  python model_function.py
+
+You will see a menu:
+  1. Webcam
+  2. Video file
+  3. Image file
+
+Enter 1, 2, or 3 and press Enter.
+
+
+----------------------------------------------------------------
+OPTION 1 — WEBCAM (Live Camera)
+----------------------------------------------------------------
+- Opens your PC webcam automatically
+- Counts people every 10 frames (roughly every 10 seconds)
+- Shows a live window with the count overlaid
+- Press Q to stop
+- Results are saved to result.txt automatically
+
+Output format: "X to Y people" (a range)
+Example: "12 to 15 people"
+
+
+----------------------------------------------------------------
+OPTION 2 — VIDEO FILE
+----------------------------------------------------------------
+- Enter the full path to your video file when prompted
+- Model samples one frame per second throughout the video
+- Shows count for each second in the terminal
+- At the end shows the overall min and max range
+
+Example path input:
+  C:\Users\you\Videos\bus_footage.mp4
+
+Output format: "X to Y people across N seconds"
+Example: "8 to 14 people across 30 seconds"
+
+
+----------------------------------------------------------------
+OPTION 3 — IMAGE FILE
+----------------------------------------------------------------
+- Enter the full path to your image file when prompted
+- Model analyses the image and returns exact count
+
+Example path input:
+  C:\Users\you\Pictures\crowd.jpg
+
+Output format: "People count: X"
+Example: "People count: 23"
+
+
+----------------------------------------------------------------
+OUTPUT FILE
+----------------------------------------------------------------
+Every time a prediction is made, the result is automatically 
+saved to result.txt in the same folder.
+
+Format inside result.txt:
+  [source file path] - [min] to [max] people
+
+Example:
+  C:\Videos\bus.mp4 - 8 to 14 people
+
+
+----------------------------------------------------------------
+IMPORTANT NOTES
+----------------------------------------------------------------
+
+1. The model works best on:
+   - Clear images with visible people
+   - Moderate to high density crowds
+   - Similar scenes to ShanghaiTech dataset
+
+2. The model may be less accurate on:
+   - Very low light images
+   - Single person or very sparse scenes
+   - Extreme close-ups
+
+3. csrnet.pth MUST be in the same folder as the script.
+   If missing you will get a FileNotFoundError.
+
+4. First run may be slow as the VGG16 backbone 
+   downloads pretrained weights automatically (~500MB).
+   After first run it is cached and loads instantly.
+
+5. If you have a NVIDIA GPU with CUDA installed,
+   the model automatically uses it for faster processing.
+   Otherwise it runs on CPU (slower but works fine).
+
+
+----------------------------------------------------------------
+MODEL ARCHITECTURE (Simple Explanation)
+----------------------------------------------------------------
+
+The model has two main parts:
+
+Frontend : Uses the first 23 layers of VGG16 
+           (a well known image recognition network)
+           to extract features from the image.
+
+Backend  : Custom dilated convolution layers that 
+           process those features and produce a 
+           density map — a heatmap where brighter 
+           areas mean more people.
+
+Output   : The sum of all values in the density map 
+           gives the final people count.
+
+Training : 10 epochs, Adam optimizer, MSE loss,
+           learning rate 1e-5 with step decay.
+
+
+================================================================
+                      END OF GUIDE
+================================================================

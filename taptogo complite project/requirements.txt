@@ -1,0 +1,5 @@
+flet>=0.24.0
+flet-webview>=0.4.0  # Optional: for Leaflet map in WebView (macOS, iOS, Android, Web)
+torch>=2.0.0
+torchvision>=0.15.0
+opencv-python>=4.8.0
